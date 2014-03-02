@@ -82,6 +82,10 @@
 ;; (require 'yasnippet)
 ;; (yas-global-mode 1)
 
+;; Autopairs
+(electric-pair-mode)
+
+
 ;;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;;;                              General UI settings
 ;;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -428,3 +432,15 @@
 ;; Highlight dead code between "#if 0" and "#endif"
 ;;(setq *bde-highlight-dead-code-color* "darkred")
 ;;(add-hook 'c-mode-common-hook 'bde-highlight-dead-code)
+
+
+;;; Pawel's python-based BDE-style formatter
+(defun bde-format-around-point ()
+  "Test Pawel's formatter"
+  (interactive)
+  (let ((line (- (line-number-at-pos) 1))
+        (col  (current-column)))
+    (compile
+     (format "python /Users/phil/Code/bdeformat/pythonx/bdeformatfile.py %s %d %d"
+             (shell-quote-argument (buffer-file-name))
+             line col))))
