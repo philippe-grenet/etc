@@ -1,7 +1,7 @@
 ;;; Philippe's .emacs
 
 ;;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-;;; Macros
+;;;                                 Macros
 ;;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 (defmacro gnu-emacs-only (&rest x)
@@ -83,7 +83,8 @@
 ;; (yas-global-mode 1)
 
 ;; Autopairs
-(electric-pair-mode)
+(when (fboundp 'electric-pair-mode)
+  (electric-pair-mode))
 
 
 ;;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -153,7 +154,10 @@
 
 (setq large-file-warning-threshold nil)
 
-;; Remove trailing blanks on save
+;;; Show trailing whitespaces
+;;; Remove trailing blanks on save
+(setq show-trailing-whitespace t)
+(setq delete-trailing-lines nil) ;; for command delete-trailing-whitespace
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 
@@ -202,34 +206,6 @@
    (setq make-backup-files nil))
 
  (no-backup-files))
-
-;; (defun goto-match-paren (arg)
-;;   "Go to the matching parenthesis if on parenthesis. Else go to
-;;    the opening parenthesis one level up."
-;;      (interactive "p")
-;;      (cond ((looking-at "\\s\(") (forward-list 1))
-;;            (t
-;;             (backward-char 1)
-;;             (cond ((looking-at "\\s\)")
-;;                    (forward-char 1) (backward-list 1))
-;;                   (t
-;;                    (while (not (looking-at "\\s("))
-;;                      (backward-char 1)
-;;                      (cond ((looking-at "\\s\)")
-;;                             (message "->> )")
-;;                             (forward-char 1)
-;;                             (backward-list 1)
-;;                             (backward-char 1)))
-;;                      ))))))
-
-;; (defun goto-match-paren (arg)
-;;   "Go to the matching parenthesis if on parenthesis, otherwise
-;; insert the character typed."
-;;   (interactive "p")
-;;   (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
-;;         ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
-;;         (t                    (self-insert-command (or arg 1))) ))
-;; (global-set-key [(control %)] 'goto-match-paren)
 
 
 ;;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -433,6 +409,20 @@
 ;;(setq *bde-highlight-dead-code-color* "darkred")
 ;;(add-hook 'c-mode-common-hook 'bde-highlight-dead-code)
 
+;; Match parentheses
+(define-key global-map [(control %)] 'bde-goto-match-paren)
+
+;; Insert class header
+(global-set-key [(control c)(=)] 'bde-insert-define-class-header)
+(global-set-key [(control c)(-)] 'bde-insert-declare-class-header)
+
+;; Make emacs follow camel case names in C++ files
+(add-hook 'c-mode-common-hook (lambda () (subword-mode 1)))
+
+
+;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;; TODO work in progress
+;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ;;; Pawel's python-based BDE-style formatter
 (defun bde-format-around-point ()
