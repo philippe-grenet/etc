@@ -1,0 +1,15 @@
+#!/opt/local/bin/zsh
+
+# Kill the emacs daemon.
+killem() {
+    # Check if emacs dameon is running
+    iam=`whoami`
+    `ps -f -u ${iam} | grep 'Emacs' | grep 'daemon' | grep -v grep > /dev/null`
+    if [[ $? = 0 ]]; then
+        # emacs daemon running, kill it
+        echo "Stopping emacs daemon"
+        /Applications/Emacs.app/Contents/MacOS/bin/emacsclient -e "(kill-emacs)"
+    else
+        echo "Emacs daemon is not running"
+    fi
+}

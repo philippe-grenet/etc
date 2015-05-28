@@ -1,0 +1,16 @@
+#!/opt/local/bin/zsh
+
+# start an emacs daemon is none is running, and then starts an emacsclient with
+# scripts arguments
+em() {
+    # Check if emacs dameon is running
+    iam=`whoami`
+    `ps -f -u ${iam} | grep 'Emacs' | grep 'daemon' | grep -v grep > /dev/null`
+    if [[ $? != 0 ]]; then
+        # no emacs daemon running, start one
+        /Applications/Emacs.app/Contents/MacOS/Emacs --daemon
+    fi
+
+    # start a window
+    /Applications/Emacs.app/Contents/MacOS/bin/emacsclient -c -n $@
+}
