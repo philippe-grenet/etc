@@ -1,4 +1,5 @@
 # Philippe's .zshrc
+# The Unix shell: the crapiest programming language you'll ever see.
 
 ################################################################################
 # Path
@@ -99,18 +100,55 @@ RED=$'\033[38;5;167m'
 GREEN=$'\033[38;5;148m'
 #BLUE=$'\033[38;5;111m'
 BLUE=$'\033[38;5;117m'
+DARK_BLUE='\033[38;5;4m'
 #YELLOW=$'\033[38;5;228m'
 YELLOW=$'\033[38;5;221m'
 ORANGE=$'\033[38;5;173m'
 
-function precmd() {
-    export PROMPT="%{$BLUE%}%m%{$GREEN%}[%3~]%{$YELLOW%}$(current_git_branch)%{$BLACK%}%# "
-    case $TERM in
-        xterm*)
-            print -Pn "\e]0;%n@%m: %~\a"
-            ;;
-    esac
+# function precmd() {
+#     export PROMPT="%{$BLUE%}%m%{$GREEN%}[%03.]%{$YELLOW%}$(current_git_branch)%{$BLACK%}%# "
+#     case $TERM in
+#         xterm*)
+#             print -Pn "\e]0;%n@%m: %~\a"
+#             ;;
+#     esac
+# }
+
+directory_name() {
+    PROMPT_PATH=""
+
+    CURRENT=`dirname ${PWD}`
+    if [[ $CURRENT = / ]]; then
+        PROMPT_PATH=""
+    elif [[ $PWD = $HOME ]]; then
+        PROMPT_PATH=""
+    else
+        if [[ -d $(git rev-parse --show-toplevel 2>/dev/null) ]]; then
+            # We're in a git repo.
+            BASE=$(basename $(git rev-parse --show-toplevel))
+            if [[ $PWD = $(git rev-parse --show-toplevel) ]]; then
+                # We're in the root.
+                PROMPT_PATH=""
+            else
+                # We're not in the root. Display the git repo root.
+                GIT_ROOT="%{$fg_bold[red]%}%{$DARK_BLUE%}${BASE}%{$reset_color%}"
+
+                PATH_TO_CURRENT="${PWD#$(git rev-parse --show-toplevel)}"
+                PATH_TO_CURRENT="%{$BLUE%}${PATH_TO_CURRENT%/*}%{$reset_color%}"
+
+                PROMPT_PATH="${GIT_ROOT}${PATH_TO_CURRENT}/"
+            fi
+        else
+            PROMPT_PATH=$(print -P %3~)
+            PROMPT_PATH="${PROMPT_PATH%/*}/"
+        fi
+    fi
+
+    #echo "%{$fg_bold[cyan]%}${PROMPT_PATH}%{$reset_color%}%{$fg[green]%}%1~%{$reset_color%}"
+    echo "${PROMPT_PATH}%{$reset_color%}%{$fg_bold[red]%}%{$BLUE%}%1~%{$reset_color%}"
 }
+
+export PROMPT=$'$(directory_name) %{$GREEN%}$(current_git_branch)%{$BLACK%} %# '
 
 ################################################################################
 # Functions
