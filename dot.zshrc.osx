@@ -114,41 +114,42 @@ ORANGE=$'\033[38;5;173m'
 #     esac
 # }
 
-directory_name() {
+current_directory() {
     PROMPT_PATH=""
-
     CURRENT=`dirname ${PWD}`
     if [[ $CURRENT = / ]]; then
         PROMPT_PATH=""
     elif [[ $PWD = $HOME ]]; then
         PROMPT_PATH=""
     else
-        if [[ -d $(git rev-parse --show-toplevel 2>/dev/null) ]]; then
-            # We're in a git repo.
-            BASE=$(basename $(git rev-parse --show-toplevel))
-            if [[ $PWD = $(git rev-parse --show-toplevel) ]]; then
-                # We're in the root.
+        GIT_REPO_PATH=$(git rev-parse --show-toplevel 2>/dev/null)
+        if [[ -d $GIT_REPO_PATH ]]; then
+            # We are in a git repo.
+            BASE=$(basename $GIT_REPO_PATH)
+            if [[ $PWD = $GIT_REPO_PATH ]]; then
+                # We are at the root of the git repo.
                 PROMPT_PATH=""
             else
                 # We're not in the root. Display the git repo root.
                 GIT_ROOT="%{$fg_bold[red]%}%{$DARK_BLUE%}${BASE}%{$reset_color%}"
-
-                PATH_TO_CURRENT="${PWD#$(git rev-parse --show-toplevel)}"
+                PATH_TO_CURRENT="${PWD#$GIT_REPO_PATH}"
                 PATH_TO_CURRENT="%{$BLUE%}${PATH_TO_CURRENT%/*}%{$reset_color%}"
-
                 PROMPT_PATH="${GIT_ROOT}${PATH_TO_CURRENT}/"
             fi
         else
-            PROMPT_PATH=$(print -P %3~)
-            PROMPT_PATH="${PROMPT_PATH%/*}/"
+            # We are not in a git repo.
+            PATH_TO_CURRENT=$(print -P %3~)
+            PATH_TO_CURRENT="%{$BLUE%}${PATH_TO_CURRENT%/*}%{$reset_color%}"
+            PROMPT_PATH="${PATH_TO_CURRENT}/"
+            #PROMPT_PATH=$(print -P %3~)
+            #PROMPT_PATH="${PROMPT_PATH%/*}/"
         fi
     fi
-
     #echo "%{$fg_bold[cyan]%}${PROMPT_PATH}%{$reset_color%}%{$fg[green]%}%1~%{$reset_color%}"
     echo "${PROMPT_PATH}%{$reset_color%}%{$fg_bold[red]%}%{$BLUE%}%1~%{$reset_color%}"
 }
 
-export PROMPT=$'$(directory_name) %{$GREEN%}$(current_git_branch)%{$BLACK%} %# '
+export PROMPT=$'$(current_directory) %{$GREEN%}$(current_git_branch)%{$BLACK%} %# '
 
 ################################################################################
 # Functions
