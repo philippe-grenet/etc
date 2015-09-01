@@ -163,6 +163,16 @@ for file in ${HOME}/.zsh/fn/*; do
     fi
 done
 
+root() {
+    if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) != 'true' ]]; then
+        echo "Not in a git repository"
+        return 1
+    fi
+
+    local ROOT_PATH=$(git rev-parse --show-toplevel)
+    cd $ROOT_PATH
+}
+
 ################################################################################
 # Aliases
 ################################################################################
@@ -173,3 +183,6 @@ alias ec='/Applications/Emacs.app/Contents/MacOS/Emacs'
 alias emnw='/Applications/Emacs.app/Contents/MacOS/Emacs -nw'
 alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
 alias cls='echo -e "\ec\e[3J"'
+
+alias todos="find . -name '*.cpp' -o -name '*.h' | xargs grep --color 'TODO:\|FIXME:\|TBD:'"
+alias fixmes="find . -name '*.cpp' -o -name '*.h' | xargs grep --color 'FIXME:'"
