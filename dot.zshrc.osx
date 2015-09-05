@@ -163,16 +163,6 @@ for file in ${HOME}/.zsh/fn/*; do
     fi
 done
 
-root() {
-    if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) != 'true' ]]; then
-        echo "Not in a git repository"
-        return 1
-    fi
-
-    local ROOT_PATH=$(git rev-parse --show-toplevel)
-    cd $ROOT_PATH
-}
-
 ################################################################################
 # Aliases
 ################################################################################
