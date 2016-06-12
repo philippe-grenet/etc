@@ -23,6 +23,11 @@ bindkey -e
 export EDITOR=/Applications/Emacs.app/Contents/MacOS/Emacs
 export GIT_EDITOR=/Applications/Emacs.app/Contents/MacOS/Emacs
 
+# C-x C-e to edit the command line in Emacs
+autoload -z edit-command-line
+zle -N edit-command-line
+bindkey "^X^E" edit-command-line
+
 ################################################################################
 # Settings
 ################################################################################
@@ -33,7 +38,7 @@ SAVEHIST=1000
 HISTFILE=~/.zsh_history
 #setop INC_APPEND_HISTORY
 setopt APPEND_HISTORY
-#setopt histignorealldups sharehistory
+setopt histignorealldups sharehistory
 
 # Use modern completion system
 autoload -Uz compinit
@@ -49,7 +54,6 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-colors ''
 zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
 zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
-zstyle ':completion:*' menu select=long
 zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
 zstyle ':completion:*' use-compctl false
 zstyle ':completion:*' verbose true
