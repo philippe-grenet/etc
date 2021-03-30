@@ -1,7 +1,11 @@
 -- Philippe's Hamerspoon configuration
 
--- Window snapping -------------------------------------------------------------
+-- Disable animations
+hs.window.animationDuration=0
 
+-- Window mamager -------------------------------------------------------------
+
+-- Snap left or rigth
 hs.hotkey.bind({"cmd", "alt", "ctrl"}, "Left", function()
   local win = hs.window.focusedWindow()
   local f = win:frame()
@@ -28,6 +32,7 @@ hs.hotkey.bind({"cmd", "alt", "ctrl"}, "Right", function()
   win:setFrame(f)
 end)
 
+-- Move to Top Middle
 hs.hotkey.bind({"cmd", "alt", "ctrl"}, "Up", function()
   local win = hs.window.focusedWindow()
   -- hs.alert.show(win)
@@ -37,12 +42,23 @@ hs.hotkey.bind({"cmd", "alt", "ctrl"}, "Up", function()
   win:setFrame(f)
 end)
 
+-- Center on the screen
 hs.hotkey.bind({"cmd", "alt", "ctrl"}, "Down", function()
   local win = hs.window.focusedWindow()
   win:centerOnScreen()
 end)
 
--- Shortcuts to launch applications --------------------------------------------
+-- Left or right screen
+hs.hotkey.bind({"cmd", "alt", "ctrl"}, '1', function()
+  hs.window.focusedWindow():moveOneScreenWest(true)
+end)
+
+hs.hotkey.bind({"cmd", "alt", "ctrl"}, '2', function()
+  hs.window.focusedWindow():moveOneScreenEast(true)
+end)
+
+
+-- Shortcuts to launch applications -------------------------------------------
 
 hs.hotkey.bind({"cmd", "alt", "ctrl"}, 'D', function ()
       hs.application.launchOrFocus("Dictionary")
@@ -118,3 +134,6 @@ hs.hotkey.bind({ "cmd", "alt", "ctrl"}, "e", function ()
 end)
 
 ]]
+
+-- Show that the config was reloaded
+hs.alert.show("Config loaded")
