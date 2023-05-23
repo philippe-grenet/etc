@@ -1,0 +1,36 @@
+#!/bin/zsh
+
+# Restores a .enc backup file, expending it into the current directory.
+# It makes sure that the output directory does not already exist.
+# Ex: restore org.enc  => will write 'org' in the current dir.
+
+function restore() {
+    local USAGE=0
+
+    if [ -z "$1" ]; then
+        echo "Missing .enc file"
+        USAGE=1
+
+    else
+        local ENC="$1"
+        local TARGET=`basename $1 .enc`
+        local TAR="/tmp/$TARGET.tar"
+        if [ -f $TARGET ]
+        then
+            echo "$TARGET already exists!"
+            USAGE=1
+        else
+            echo "Restoring $ENC ⮕ $TARGET"
+            rm -f $TAR
+            openssl enc -d -aes-256-cbc -in $ENC -out $TAR
+            gtar xf $TAR
+            rm -f $TAR
+        fi
+    fi
+
+    if [ "$USAGE" -ne 0 ]; then
+        echo "Usage: restore <dir.enc>";
+        echo "  Restores <dir> from <dir>.enc (writes in the current directory)"
+        return 1
+    fi
+}
