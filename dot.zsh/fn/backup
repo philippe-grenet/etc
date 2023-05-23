@@ -1,0 +1,40 @@
+#!/bin/zsh
+
+# Creates a secure backup of a given directory (encrypted tar)
+# Ex: backup org  => creates org.enc in the current directory
+
+function backup() {
+    local USAGE=0
+
+    if [ "$#" -ne 1 ]; then
+        echo "Missing directory to backup."
+        USAGE=1
+
+    elif [ ! -d "$1" ]; then
+        echo "$1 is not a directory."
+        USAGE=1
+
+    else
+        local SRC="$1"
+        local TAR="/tmp/$1.tar"
+        local ENC="$1.enc"
+        if read -q "REPLY?Do you want to back up directory '$SRC' into archive '$ENC?' [y/n] "; then
+            echo "\nBacking up '$SRC' ⮕ '$ENC'";
+            echo "Creating archive...";
+            rm -f $TAR $ENC;
+            gtar cf $TAR $SRC;
+            echo "Encrypting..."
+            openssl enc -aes-256-cbc -salt -in $TAR -out $ENC;
+            rm -f $TAR;
+        else
+            echo "\nAborting"
+        fi
+    fi
+
+    if [ "$USAGE" -ne 0 ]; then
+        echo "Usage: backup <dir>";
+        echo "  Creates archive file <dir>.enc containing the whole of <dir>.";
+        echo "  The archive file is written in the current directory.";
+        return 1
+    fi
+}
