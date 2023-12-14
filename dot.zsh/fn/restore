@@ -22,7 +22,7 @@ function restore() {
         else
             echo "Restoring $ENC ⮕ $TARGET"
             rm -f $TAR
-            openssl enc -d -aes-256-cbc -in $ENC -out $TAR
+            openssl enc -d -aes-256-cbc -pbkdf2 -in $ENC -out $TAR
             gtar xf $TAR
             rm -f $TAR
         fi
@@ -34,3 +34,4 @@ function restore() {
         return 1
     fi
 }
+
