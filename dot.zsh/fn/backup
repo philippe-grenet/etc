@@ -24,7 +24,7 @@ function backup() {
             rm -f $TAR $ENC;
             gtar cf $TAR $SRC;
             echo "Encrypting..."
-            openssl enc -aes-256-cbc -salt -in $TAR -out $ENC;
+            openssl enc -aes-256-cbc -pbkdf2 -salt -in $TAR -out $ENC;
             rm -f $TAR;
         else
             echo "\nAborting"
